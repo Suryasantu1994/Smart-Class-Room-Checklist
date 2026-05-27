@@ -273,9 +273,6 @@
     /* Toast position */
     .toast { right: 12px; bottom: 16px; left: 12px; text-align: center; }
 
-    /* Snapshot modal */
-    #snapshot-btn-row { flex-direction: column; }
-    #snapshot-btn-row .btn { width: 100%; flex: none; }
   }
 
   @media (max-width: 400px) {
@@ -413,23 +410,23 @@
   </div>
 </div>
 <!-- Dashboard Snapshot Modal -->
-<div class="modal-overlay" id="snapshot-modal" style="z-index:300;">
-  <div class="modal" style="width:520px;max-width:96vw;">
-    <h2 style="margin-bottom:12px;">📸 Dashboard Snapshot</h2>
-    <div id="snapshot-preview" style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;background:var(--surface2);min-height:160px;display:flex;align-items:center;justify-content:center;">
+<div class="modal-overlay" id="snapshot-modal" style="z-index:300;align-items:flex-end;">
+  <div class="modal" style="width:520px;max-width:100vw;max-height:92dvh;display:flex;flex-direction:column;border-radius:14px 14px 0 0;margin:0;overflow:hidden;padding:20px 18px;">
+    <h2 style="margin-bottom:12px;flex-shrink:0;">📸 Dashboard Snapshot</h2>
+    <div id="snapshot-preview" style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;background:var(--surface2);min-height:120px;max-height:50dvh;display:flex;align-items:center;justify-content:center;flex-shrink:1;overflow-y:auto;">
       <span style="color:var(--muted);font-size:13px;">Generating snapshot…</span>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;" id="snapshot-btn-row">
-      <button class="btn btn-primary" style="background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:140px;" id="wa-share-btn" onclick="whatsappShare()" disabled>
+    <div style="display:flex;gap:8px;flex-direction:column;flex-shrink:0;" id="snapshot-btn-row">
+      <button class="btn btn-primary" style="background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;" id="wa-share-btn" onclick="whatsappShare()" disabled>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.115 1.522 5.845L.057 23.07a.5.5 0 0 0 .623.623l5.225-1.465A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.928 0-3.727-.518-5.271-1.422l-.379-.223-3.927 1.101 1.101-3.927-.223-.379A9.953 9.953 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
         Share on WhatsApp
       </button>
-      <button class="btn" id="snap-download-btn" style="background:var(--accent2);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:120px;" onclick="downloadSnapshot()" disabled>
-        ⬇ Save Image
-      </button>
-      <button class="btn btn-outline" style="color:var(--text);border-color:var(--border);" onclick="closeSnapshotModal()">✕ Close</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" id="snap-download-btn" style="background:var(--accent2);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;flex:1;" onclick="downloadSnapshot()" disabled>⬇ Save Image</button>
+        <button class="btn btn-outline" style="color:var(--text);border-color:var(--border);flex:1;" onclick="closeSnapshotModal()">✕ Close</button>
+      </div>
     </div>
-    <p style="font-size:11px;color:var(--muted);margin-top:10px;">💡 The caption is stamped onto the image. On Android/iOS tap Share on WhatsApp → native share sheet → pick WhatsApp. On desktop the image is downloaded.</p>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;flex-shrink:0;">💡 On Android/iOS tap Share on WhatsApp → native share sheet → pick WhatsApp. On desktop the image is downloaded.</p>
   </div>
 </div>
 <div class="toast" id="toast"></div>
