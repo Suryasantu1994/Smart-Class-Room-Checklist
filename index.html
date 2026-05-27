@@ -272,6 +272,10 @@
 
     /* Toast position */
     .toast { right: 12px; bottom: 16px; left: 12px; text-align: center; }
+
+    /* Snapshot modal */
+    #snapshot-btn-row { flex-direction: column; }
+    #snapshot-btn-row .btn { width: 100%; flex: none; }
   }
 
   @media (max-width: 400px) {
@@ -308,7 +312,7 @@
 <!-- DASHBOARD -->
 <div class="main-view active" id="view-dashboard">
   <div class="container">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+    <div id="share-row" style="display:flex;justify-content:flex-end;margin-bottom:12px;">
       <button class="btn btn-primary" style="background:var(--accent);color:#fff;display:flex;align-items:center;gap:6px;" onclick="shareDashboard()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.115 1.522 5.845L.057 23.07a.5.5 0 0 0 .623.623l5.225-1.465A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.928 0-3.727-.518-5.271-1.422l-.379-.223-3.927 1.101 1.101-3.927-.223-.379A9.953 9.953 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
         Share Dashboard
@@ -331,11 +335,7 @@
         <div class="dash-subtitle">% of assets inspected per building</div>
         <div class="chart-container"><canvas id="chart-progress"></canvas></div>
       </div>
-      <div class="dash-card dash-wide">
-        <h3>Building Summary Table</h3>
-        <div class="dash-subtitle">Room count and condition totals per building</div>
-        <table class="bld-stat-table" id="bld-stat-table"></table>
-      </div>
+
     </div>
   </div>
 </div>
@@ -419,12 +419,12 @@
     <div id="snapshot-preview" style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px;background:var(--surface2);min-height:160px;display:flex;align-items:center;justify-content:center;">
       <span style="color:var(--muted);font-size:13px;">Generating snapshot…</span>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="btn btn-primary" style="background:#25D366;color:#fff;display:flex;align-items:center;gap:6px;flex:1;" id="wa-share-btn" onclick="whatsappShare()" disabled>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;" id="snapshot-btn-row">
+      <button class="btn btn-primary" style="background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:140px;" id="wa-share-btn" onclick="whatsappShare()" disabled>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.115 1.522 5.845L.057 23.07a.5.5 0 0 0 .623.623l5.225-1.465A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.928 0-3.727-.518-5.271-1.422l-.379-.223-3.927 1.101 1.101-3.927-.223-.379A9.953 9.953 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
         Share on WhatsApp
       </button>
-      <button class="btn" id="snap-download-btn" style="background:var(--accent2);color:#fff;display:flex;align-items:center;gap:6px;" onclick="downloadSnapshot()" disabled>
+      <button class="btn" id="snap-download-btn" style="background:var(--accent2);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;flex:1;min-width:120px;" onclick="downloadSnapshot()" disabled>
         ⬇ Save Image
       </button>
       <button class="btn btn-outline" style="color:var(--text);border-color:var(--border);" onclick="closeSnapshotModal()">✕ Close</button>
@@ -723,18 +723,7 @@ function buildDashboard() {
     }
   });
 
-  // Stat table
-  let html='<thead><tr><th>Building</th><th>Rooms</th><th>Good</th><th>Damaged</th><th>Missing</th><th>Uninspected</th><th>Progress</th></tr></thead><tbody>';
-  stats.forEach(s=>{
-    const pct=s.total>0?Math.round(s.inspected/s.total*100):0;
-    html+=`<tr><td><strong>${s.bld}</strong></td><td>${s.rooms}</td>
-      <td><span class="stat-pill pill-good">${s.good}</span></td>
-      <td><span class="stat-pill pill-damaged">${s.damaged}</span></td>
-      <td><span class="stat-pill pill-missing">${s.missing}</span></td>
-      <td style="color:var(--muted)">${s.total-s.inspected}</td>
-      <td><span class="stat-pill pill-pct">${pct}%</span></td></tr>`;
-  });
-  document.getElementById('bld-stat-table').innerHTML = html+'</tbody>';
+
 }
 
 // ── CHECKLIST ──
@@ -1088,12 +1077,13 @@ function shareDashboard() {
   document.getElementById('snapshot-modal').classList.add('open');
 
   const target = document.getElementById('view-dashboard').querySelector('.container');
-  const shareRow = target.querySelector('[onclick="shareDashboard()"]').closest('div');
+  const shareRow = document.getElementById('share-row');
   shareRow.style.display = 'none';
 
+  const isMobile = window.innerWidth < 768;
   setTimeout(() => {
     html2canvas(target, {
-      scale: 1.5, useCORS: true, backgroundColor: '#f0f4f8', logging: false
+      scale: isMobile ? 1 : 1.5, useCORS: true, backgroundColor: '#f0f4f8', logging: false
     }).then(canvas => {
       shareRow.style.display = '';
 
