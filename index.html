@@ -334,6 +334,11 @@
       </div>
 
     </div>
+    <div class="dash-card dash-wide" style="margin-top:16px;">
+      <h3>Building-wise Summary</h3>
+      <div class="dash-subtitle">Room count and asset condition totals per building</div>
+      <div id="bld-summary-table"></div>
+    </div>
   </div>
 </div>
 
@@ -411,7 +416,7 @@
 </div>
 <!-- Dashboard Snapshot Modal -->
 <div class="modal-overlay" id="snapshot-modal" style="z-index:300;align-items:flex-end;">
-  <div class="modal" style="width:520px;max-width:100vw;max-height:92dvh;display:flex;flex-direction:column;border-radius:14px 14px 0 0;margin:0;overflow:hidden;padding:20px 18px;">
+  <div class="modal" style="width:520px;max-width:100vw;max-height:92dvh;display:flex;flex-direction:column;border-radius:14px 14px 0 0;margin:0;overflow:hidden;padding:20px 18px calc(20px + env(safe-area-inset-bottom)) 18px;">
     <h2 style="margin-bottom:12px;flex-shrink:0;">📸 Dashboard Snapshot</h2>
     <div id="snapshot-preview" style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;background:var(--surface2);min-height:120px;max-height:50dvh;display:flex;align-items:center;justify-content:center;flex-shrink:1;overflow-y:auto;">
       <span style="color:var(--muted);font-size:13px;">Generating snapshot…</span>
@@ -720,6 +725,39 @@ function buildDashboard() {
     }
   });
 
+  // Building-wise summary table
+  const tbl = document.getElementById('bld-summary-table');
+  let tblHtml = '<table class="bld-stat-table"><thead><tr>'
+    + '<th>Building</th><th>Rooms</th><th>Good</th><th>Damaged</th><th>Missing</th><th>Uninspected</th><th>% Done</th>'
+    + '</tr></thead><tbody>';
+  stats.forEach(s => {
+    const uninspected = s.total - s.inspected;
+    const pct = s.total > 0 ? Math.round(s.inspected / s.total * 100) : 0;
+    tblHtml += `<tr>
+      <td style="font-family:var(--font-head);font-weight:600;">${s.bld}</td>
+      <td>${s.rooms}</td>
+      <td><span class="stat-pill pill-good">${s.good}</span></td>
+      <td><span class="stat-pill pill-damaged">${s.damaged}</span></td>
+      <td><span class="stat-pill pill-missing">${s.missing}</span></td>
+      <td style="color:var(--muted);">${uninspected}</td>
+      <td><span class="stat-pill pill-pct">${pct}%</span></td>
+    </tr>`;
+  });
+  const totUninspected = stats.reduce((s,b) => s + (b.total - b.inspected), 0);
+  const totAll = stats.reduce((s,b) => s + b.total, 0);
+  const totInsp = stats.reduce((s,b) => s + b.inspected, 0);
+  const totPct = totAll > 0 ? Math.round(totInsp / totAll * 100) : 0;
+  tblHtml += `<tr style="background:var(--surface2);">
+    <td style="font-family:var(--font-head);font-weight:700;">TOTAL</td>
+    <td style="font-weight:700;">${totR}</td>
+    <td><span class="stat-pill pill-good">${totG}</span></td>
+    <td><span class="stat-pill pill-damaged">${totD}</span></td>
+    <td><span class="stat-pill pill-missing">${totM}</span></td>
+    <td style="color:var(--muted);font-weight:700;">${totUninspected}</td>
+    <td><span class="stat-pill pill-pct">${totPct}%</span></td>
+  </tr>`;
+  tblHtml += '</tbody></table>';
+  tbl.innerHTML = tblHtml;
 
 }
 
