@@ -262,6 +262,15 @@
     .summary-card { padding: 10px 12px; gap: 8px; }
     .summary-card .info .value { font-size: 18px; }
 
+    /* Charts: taller on mobile so labels fit */
+    .chart-container { height: 260px; }
+    .dash-wide .chart-container { height: 320px; }
+
+    /* Building summary table: scrollable */
+    #bld-summary-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .bld-stat-table { min-width: 480px; }
+    .bld-stat-table th, .bld-stat-table td { padding: 8px 8px; font-size: 12px; }
+
     /* Panel footer fill-all */
     .panel-footer { flex-wrap: wrap; gap: 8px; }
     .fill-all { flex-wrap: wrap; }
@@ -861,7 +870,10 @@ function buildDashboard() {
     <div class="kpi-card kpi-damaged"><div class="kpi-label">Damaged</div><div class="kpi-value">${totD}</div><div class="kpi-sub">needs attention</div></div>
     <div class="kpi-card kpi-missing"><div class="kpi-label">Missing</div><div class="kpi-value">${totM}</div><div class="kpi-sub">not found</div></div>`;
 
-  const labels = stats.map(s => s.bld.replace('AB2 - ','AB2\n').replace('AB1 - ','AB1\n'));
+  const isMobile = window.innerWidth < 768;
+  const labels = stats.map(s => isMobile
+    ? s.bld.replace('AB1 - ','AB1\n').replace('AB2 - ','AB2\n').replace('rd Floor','F').replace('nd Floor','F').replace('th Floor','F').replace(' Floor','F')
+    : s.bld.replace('AB2 - ','AB2\n').replace('AB1 - ','AB1\n'));
 
   // Overview grouped bar
   const c1 = document.getElementById('chart-overview').getContext('2d');
@@ -880,7 +892,7 @@ function buildDashboard() {
       },
       layout:{padding:{top:24}},
       scales:{
-        x:{grid:{color:'#dde3ec'},ticks:{color:'#6b7a93',font:{family:'DM Sans',size:10},maxRotation:35,minRotation:20,autoSkip:false}},
+        x:{grid:{color:'#dde3ec'},ticks:{color:'#6b7a93',font:{family:'DM Sans',size:isMobile?9:10},maxRotation:isMobile?45:35,minRotation:isMobile?45:20,autoSkip:false}},
         y:{beginAtZero:true,grid:{color:'#dde3ec'},ticks:{color:'#6b7a93',font:{family:'DM Sans',size:11}}}
       }
     }
@@ -1309,34 +1321,44 @@ function shareDashboard() {
   document.getElementById('snap-download-btn').disabled = true;
   document.getElementById('snapshot-modal').classList.add('open');
 
-  const target = document.getElementById('view-dashboard').querySelector('.container');
   const shareRow = document.getElementById('share-row');
   shareRow.style.display = 'none';
 
   const isMobile = window.innerWidth < 768;
+  const snapWidth = isMobile ? 800 : 1200;
+
+  // Clone the dashboard container into a hidden fixed-size div for clean capture
+  const dashEl = document.getElementById('view-dashboard').querySelector('.container');
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = `position:fixed;left:-9999px;top:0;width:${snapWidth}px;background:#f0f4f8;padding:20px;box-sizing:border-box;font-family:'DM Sans',sans-serif;`;
+  const clone = dashEl.cloneNode(true);
+  // Remove share row from clone
+  const cloneShareRow = clone.querySelector('#share-row');
+  if (cloneShareRow) cloneShareRow.remove();
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+
   setTimeout(() => {
-    html2canvas(target, {
-      scale: isMobile ? 1 : 1.5, useCORS: true, backgroundColor: '#f0f4f8', logging: false
+    html2canvas(wrapper, {
+      scale: 1.5, useCORS: true, backgroundColor: '#f0f4f8', logging: false,
+      width: snapWidth, windowWidth: snapWidth
     }).then(canvas => {
+      document.body.removeChild(wrapper);
       shareRow.style.display = '';
 
-      // Stamp caption footer onto canvas
+      // Stamp caption footer
       const date = document.getElementById('inspection-date').value || new Date().toISOString().slice(0,10);
-      const caption = '📊 Smart Classroom Dashboard — ' + date + ' | GITAM University L1 Asset Report';
-      const padV = 28, fontSize = 22;
+      const caption = 'Smart Classroom Dashboard — ' + date + ' | GITAM University';
+      const padV = 20, fontSize = Math.round(canvas.width * 0.022);
       const stamped = document.createElement('canvas');
       stamped.width = canvas.width;
-      stamped.height = canvas.height + padV * 2 + fontSize;
+      stamped.height = canvas.height + padV * 2 + fontSize + 4;
       const ctx = stamped.getContext('2d');
-      // Background
-      ctx.fillStyle = '#0b8f74';
+      ctx.fillStyle = '#f0f4f8';
       ctx.fillRect(0, 0, stamped.width, stamped.height);
-      // Original dashboard image
       ctx.drawImage(canvas, 0, 0);
-      // Footer bar
       ctx.fillStyle = '#0b8f74';
-      ctx.fillRect(0, canvas.height, stamped.width, padV * 2 + fontSize);
-      // Caption text
+      ctx.fillRect(0, canvas.height, stamped.width, padV * 2 + fontSize + 4);
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold ' + fontSize + 'px DM Sans, Arial, sans-serif';
       ctx.textAlign = 'center';
@@ -1352,10 +1374,11 @@ function shareDashboard() {
       document.getElementById('wa-share-btn').disabled = false;
       document.getElementById('snap-download-btn').disabled = false;
     }).catch(() => {
+      if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
       shareRow.style.display = '';
       preview.innerHTML = '<span style="color:var(--danger);font-size:13px;">Failed to capture. Try again.</span>';
     });
-  }, 150);
+  }, 300);
 }
 
 async function whatsappShare() {
