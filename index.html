@@ -194,20 +194,63 @@
   .lightbox-actions { display: flex; gap: 10px; }
 
   /* Manage Assets Modal */
-  .asset-manage-modal { width: 560px; max-height: 85vh; display: flex; flex-direction: column; }
-  .asset-manage-modal h2 { margin-bottom: 8px; }
-  .asset-manage-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-  .asset-list-scroll { flex: 1; overflow-y: auto; margin-bottom: 14px; border: 1px solid var(--border); border-radius: 8px; }
-  .asset-list-table { width: 100%; border-collapse: collapse; }
-  .asset-list-table th { font-family: var(--font-head); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; text-align: left; background: var(--surface2); border-bottom: 1px solid var(--border); position: sticky; top: 0; }
-  .asset-list-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
-  .asset-list-table tr:last-child td { border-bottom: none; }
-  .asset-list-table tr:hover td { background: rgba(11,143,116,0.03); }
+  .asset-manage-modal { width: 740px; max-width: 96vw; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+  .asset-manage-modal h2 { margin-bottom: 0; flex-shrink: 0; }
+  .asset-modal-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; margin-bottom: 0; }
+  .asset-tab-btn { flex: 1; padding: 10px 0; font-family: var(--font-head); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: -1px; }
+  .asset-tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .asset-tab-btn:hover:not(.active) { color: var(--text); }
+  .asset-tab-pane { display: none; flex: 1; min-height: 0; overflow: hidden; }
+  .asset-tab-pane.active { display: flex; }
+
+  /* INVENTORY TAB */
+  .inv-left { width: 240px; min-width: 200px; border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .inv-left-header { padding: 10px 12px 6px; flex-shrink: 0; display: flex; gap: 6px; align-items: center; }
+  .inv-left-list { flex: 1; overflow-y: auto; }
+  .inv-asset-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+  .inv-asset-item:hover { background: rgba(11,143,116,0.05); }
+  .inv-asset-item.selected { background: rgba(11,143,116,0.1); border-left: 3px solid var(--accent); }
+  .inv-asset-item:not(.selected) { border-left: 3px solid transparent; }
+  .inv-asset-num { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-head); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .inv-asset-item:not(.selected) .inv-asset-num { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .inv-asset-info { flex: 1; min-width: 0; }
+  .inv-asset-name { font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .inv-asset-qty { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .inv-right { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .inv-right-header { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .inv-right-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.3px; }
+  .inv-right-hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .inv-right-body { flex: 1; overflow-y: auto; padding: 12px 16px; }
+  .inv-bld-group { margin-bottom: 16px; }
+  .inv-bld-label { font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .inv-room-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .inv-room-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .inv-room-cell label { font-family: var(--font-head); font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .inv-room-cell input { width: 100%; text-align: center; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-body); font-size: 12px; padding: 5px 4px; color: var(--text); transition: border-color 0.2s; }
+  .inv-room-cell input:focus { outline: none; border-color: var(--accent); }
+  .inv-room-cell input.overridden { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .inv-right-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; flex-shrink: 0; }
+  .inv-no-selection { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted); font-size: 13px; text-align: center; padding: 20px; }
+  .inv-add-bar { padding: 8px 12px; border-top: 1px solid var(--border); display: flex; gap: 6px; align-items: center; flex-shrink: 0; background: var(--surface2); }
+
+  /* LOCATIONS TAB */
+  .loc-tab-body { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 14px 16px; gap: 14px; }
+  .loc-add-row { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .loc-rooms-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
+  .loc-bld-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+  .loc-bld-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .loc-bld-card-name { font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
+  .loc-bld-card-count { font-size: 11px; color: var(--muted); }
+  .loc-room-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .room-tag { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-head); font-size: 11px; font-weight: 700; background: rgba(11,143,116,0.1); color: var(--accent); border: 1px solid rgba(11,143,116,0.25); border-radius: 12px; padding: 2px 8px; }
+  .room-tag .rtag-del { cursor: pointer; color: var(--muted); font-size: 11px; line-height: 1; margin-left: 2px; }
+  .room-tag .rtag-del:hover { color: var(--danger); }
+
+  /* shared inputs */
   .asset-edit-input { background: var(--bg); border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-body); font-size: 12px; padding: 4px 8px; color: var(--text); transition: border-color 0.2s; }
   .asset-edit-input:focus { outline: none; border-color: var(--accent); }
-  .asset-edit-input.name-input { width: 100%; min-width: 160px; }
-  .asset-edit-input.qty-input { width: 56px; text-align: center; }
-  .asset-row-actions { display: flex; gap: 5px; }
+  .asset-edit-input.name-input { width: 100%; min-width: 120px; }
+  .asset-edit-input.qty-input { width: 52px; text-align: center; }
   .icon-btn { font-size: 13px; padding: 4px 8px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; transition: all 0.15s; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.3px; }
   .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
   .icon-btn.save-btn:hover { background: rgba(11,143,116,0.1); border-color: var(--accent); color: var(--accent); }
@@ -215,6 +258,20 @@
   .add-asset-row { display: flex; gap: 8px; align-items: center; padding: 10px 0 4px; }
   .add-asset-row .asset-edit-input.name-input { flex: 1; }
   .manage-footer { display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; border-top: 1px solid var(--border); }
+
+  /* Room-qty expand panel */
+  .room-qty-panel { display: none; background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; margin: 4px 0 8px; }
+  .room-qty-panel.open { display: block; }
+  .room-qty-bld-group { margin-bottom: 10px; }
+  .room-qty-bld-label { font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .room-qty-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .room-qty-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .room-qty-item label { font-size: 10px; color: var(--muted); font-family: var(--font-head); font-weight: 600; }
+  .room-qty-item input { width: 50px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; font-family: var(--font-body); font-size: 12px; padding: 4px 6px; color: var(--text); transition: border-color 0.2s; }
+  .room-qty-item input:focus { outline: none; border-color: var(--accent); }
+  .room-qty-item input.overridden { border-color: var(--accent); background: rgba(11,143,116,0.06); font-weight: 600; }
+  .room-qty-actions { display: flex; gap: 6px; margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .room-qty-hint { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
 
   @media (max-width: 768px) {
     /* Summary/KPI grids */
@@ -368,12 +425,12 @@
     .bld-btn { padding: 7px 10px; font-size: 11px; }
     .summary-card .icon { width: 30px; height: 30px; font-size: 15px; }
     .snapshot-modal-inner { width: 100vw !important; }
-    .asset-manage-modal { width: 100% !important; max-width: 100vw; }
-    /* Manage assets table → card layout on mobile */
-    .asset-list-table thead { display: none; }
-    .asset-list-table, .asset-list-table tbody, .asset-list-table tr, .asset-list-table td { display: block; width: 100%; }
-    .asset-list-table tr { border-bottom: 1px solid var(--border); padding: 8px 0; }
-    .asset-list-table td:first-child { display: none; }
+    .asset-manage-modal { width: 100% !important; max-width: 100vw; max-height: 92dvh; }
+    .inv-left { width: 180px; min-width: 150px; }
+    .inv-room-grid { grid-template-columns: repeat(2, 1fr); }
+    .loc-rooms-grid { grid-template-columns: 1fr; }
+    .inv-add-bar { flex-wrap: wrap; }
+    .asset-list-table td:nth-child(4) { display: none; } /* hide By Room expand on mobile card view */
     .asset-edit-input.name-input { width: 100%; margin-bottom: 6px; }
     .asset-row-actions { margin-top: 4px; }
     .add-asset-row { flex-wrap: wrap; }
@@ -493,21 +550,50 @@
 <!-- MANAGE ASSETS MODAL -->
 <div class="modal-overlay" id="manage-assets-modal">
   <div class="modal asset-manage-modal">
-    <h2>✏️ Manage Assets</h2>
-    <div class="asset-manage-subtitle">Edit asset names, quantities, or add/remove assets. Changes apply to all rooms.</div>
-    <div class="asset-list-scroll">
-      <table class="asset-list-table" id="asset-edit-table">
-        <thead><tr><th>#</th><th>Asset Description</th><th>QTY</th><th>Actions</th></tr></thead>
-        <tbody id="asset-edit-tbody"></tbody>
-      </table>
+    <h2>&#9999;&#65039; Asset Management</h2>
+    <div class="asset-modal-tabs">
+      <button class="asset-tab-btn active" id="tab-btn-inventory" onclick="switchAssetTab('inventory')">
+        &#9881;&#65039; Inventory
+      </button>
+      <button class="asset-tab-btn" id="tab-btn-locations" onclick="switchAssetTab('locations')">
+        &#128205; Locations
+      </button>
     </div>
-    <div class="add-asset-row">
-      <span style="font-family:var(--font-head);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;">Add New:</span>
-      <input class="asset-edit-input name-input" type="text" id="new-asset-name" placeholder="Asset description..." />
-      <input class="asset-edit-input qty-input" type="number" id="new-asset-qty" placeholder="QTY" min="0" value="1" />
-      <button class="icon-btn save-btn" onclick="addNewAsset()">+ Add</button>
+
+    <!-- INVENTORY TAB -->
+    <div class="asset-tab-pane active" id="tab-inventory" style="flex-direction:column;">
+      <div style="display:flex;flex:1;min-height:0;overflow:hidden;">
+        <!-- Left: asset list -->
+        <div class="inv-left">
+          <div class="inv-left-list" id="inv-asset-list"></div>
+          <div class="inv-add-bar">
+            <input class="asset-edit-input name-input" type="text" id="new-asset-name" placeholder="Asset description..." />
+            <input class="asset-edit-input qty-input" type="number" id="new-asset-qty" placeholder="QTY" min="0" value="1" />
+            <button class="icon-btn save-btn" onclick="addNewAsset()">+</button>
+          </div>
+        </div>
+        <!-- Right: qty overrides panel -->
+        <div class="inv-right" id="inv-right-panel">
+          <div class="inv-no-selection">Select an asset to manage per-room quantities</div>
+        </div>
+      </div>
     </div>
-    <div class="manage-footer">
+
+    <!-- LOCATIONS TAB -->
+    <div class="asset-tab-pane" id="tab-locations" style="flex-direction:column;flex:1;overflow:hidden;">
+      <div class="loc-tab-body">
+        <div class="loc-add-row">
+          <select class="asset-edit-input" id="room-bld-select" style="min-width:150px;">
+            <option value="">— Building —</option>
+          </select>
+          <input class="asset-edit-input" type="text" id="new-room-number" placeholder="Rm No..." style="width:90px;" onkeydown="if(event.key==='Enter')addRoomToBuilding()" />
+          <button class="icon-btn save-btn" onclick="addRoomToBuilding()">ADD ROOM</button>
+        </div>
+        <div class="loc-rooms-grid" id="loc-rooms-grid"></div>
+      </div>
+    </div>
+
+    <div class="manage-footer" style="margin-top:0;padding:10px 16px;border-top:1px solid var(--border);">
       <button class="btn" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);" onclick="closeManageAssets()">Close</button>
     </div>
   </div>
@@ -676,6 +762,9 @@ const ASSET_QTY = {
   'CORNER CAMERA':2,'MOUSE':1
 };
 
+let ASSET_ROOM = {};  // asset name → room number string
+let ASSET_ROOM_QTY = {}; // asset name → { roomKey: qty } overrides
+
 let activeBuilding = Object.keys(BUILDINGS)[0];
 let activeRoom = null;
 let data = {};
@@ -686,83 +775,245 @@ let currentDate = new Date().toISOString().slice(0,10);
 function roomKey(b, r) { return b + '::' + r; }
 
 // ── MANAGE ASSETS ──
-function openManageAssets() {
-  renderAssetEditTable();
-  document.getElementById('manage-assets-modal').classList.add('open');
-}
-function closeManageAssets() {
-  document.getElementById('manage-assets-modal').classList.remove('open');
+let _selectedAssetIdx = null;
+
+function switchAssetTab(tab) {
+  ['inventory','locations'].forEach(t => {
+    document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'locations') renderLocGrid();
 }
 
-function renderAssetEditTable() {
-  const tbody = document.getElementById('asset-edit-tbody');
-  tbody.innerHTML = '';
+function openManageAssets() {
+  // populate locations building dropdown
+  const locSel = document.getElementById('room-bld-select');
+  locSel.innerHTML = '<option value="">— Building —</option>';
+  Object.keys(BUILDINGS).forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b; opt.textContent = b;
+    locSel.appendChild(opt);
+  });
+  _selectedAssetIdx = null;
+  renderInvAssetList();
+  document.getElementById('inv-right-panel').innerHTML = '<div class="inv-no-selection">Select an asset to manage per-room quantities</div>';
+  // reset to inventory tab
+  switchAssetTab('inventory');
+  document.getElementById('manage-assets-modal').classList.add('open');
+}
+
+function renderInvAssetList() {
+  const list = document.getElementById('inv-asset-list');
+  list.innerHTML = '';
   ASSETS.forEach((asset, i) => {
     const qty = ASSET_QTY[asset] || 1;
-    const tr = document.createElement('tr');
-    tr.id = 'asset-row-' + i;
-    tr.innerHTML =
-      '<td style="text-align:center;font-family:var(--font-head);color:var(--muted);">' + (i+1) + '</td>' +
-      '<td><input class="asset-edit-input name-input" type="text" value="' + escAttr(asset) + '" id="aname-' + i + '" /></td>' +
-      '<td><input class="asset-edit-input qty-input" type="number" value="' + qty + '" min="0" id="aqty-' + i + '" /></td>' +
-      '<td><div class="asset-row-actions">' +
-        '<button class="icon-btn save-btn" onclick="saveAssetEdit(' + i + ')">💾 Save</button>' +
-        '<button class="icon-btn del-btn" onclick="deleteAsset(' + i + ')">🗑</button>' +
-      '</div></td>';
-    tbody.appendChild(tr);
+    const hasOverrides = ASSET_ROOM_QTY[asset] && Object.keys(ASSET_ROOM_QTY[asset]).length > 0;
+    const div = document.createElement('div');
+    div.className = 'inv-asset-item' + (i === _selectedAssetIdx ? ' selected' : '');
+    div.onclick = () => selectInvAsset(i);
+    div.innerHTML =
+      '<div class="inv-asset-num">' + (i+1) + '</div>' +
+      '<div class="inv-asset-info">' +
+        '<div class="inv-asset-name">' + escAttr(asset) + '</div>' +
+        '<div class="inv-asset-qty">Default Qty: ' + qty + (hasOverrides ? ' · <span style="color:var(--accent)">Custom</span>' : '') + '</div>' +
+      '</div>' +
+      '<span title="Delete" style="color:var(--muted);cursor:pointer;font-size:13px;padding:2px 4px;" onclick="event.stopPropagation();deleteAsset(' + i + ')">🗑</span>';
+    list.appendChild(div);
   });
 }
 
-function escAttr(s) { return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-function safeId(s) { return s.replace(/[^a-zA-Z0-9_\-]/g,'_'); }
+function selectInvAsset(i) {
+  // save any pending edits for previously selected asset handled via save btn
+  _selectedAssetIdx = i;
+  renderInvAssetList();
+  buildInvRightPanel(i);
+}
 
-function saveAssetEdit(i) {
+function buildInvRightPanel(i) {
+  const asset = ASSETS[i];
+  const defaultQty = ASSET_QTY[asset] || 1;
+  const overrides = ASSET_ROOM_QTY[asset] || {};
+  const panel = document.getElementById('inv-right-panel');
+
+  let bldHtml = '';
+  Object.entries(BUILDINGS).forEach(([bld, rooms]) => {
+    if (!rooms.length) return;
+    bldHtml += '<div class="inv-bld-group">';
+    bldHtml += '<div class="inv-bld-label">' + escAttr(bld) + '</div>';
+    bldHtml += '<div class="inv-room-grid">';
+    rooms.forEach(r => {
+      const rk = roomKey(bld, r);
+      const val = overrides[rk] !== undefined ? overrides[rk] : '';
+      const isOv = val !== '';
+      bldHtml += '<div class="inv-room-cell">' +
+        '<label>Rm ' + r + '</label>' +
+        '<input type="number" min="0" data-rk="' + escAttr(rk) + '" data-default="' + defaultQty + '"' +
+        ' value="' + (val !== '' ? val : '') + '" placeholder="' + defaultQty + '"' +
+        (isOv ? ' class="overridden"' : '') +
+        ' oninput="this.classList.toggle(\'overridden\', this.value!==\'\' && parseInt(this.value)!==' + defaultQty + ')" />' +
+        '</div>';
+    });
+    bldHtml += '</div></div>';
+  });
+
+  panel.innerHTML =
+    '<div class="inv-right-header">' +
+      '<div class="inv-right-title">QTY OVERRIDES FOR "' + escAttr(asset) + '"</div>' +
+      '<div class="inv-right-hint">Customize quantity for specific rooms. Matching default (' + defaultQty + ') will clear override.</div>' +
+    '</div>' +
+    '<div class="inv-right-body">' + (bldHtml || '<span style="color:var(--muted);font-size:12px;">No rooms defined.</span>') + '</div>' +
+    '<div class="inv-right-footer">' +
+      '<input class="asset-edit-input name-input" type="text" id="inv-asset-name-' + i + '" value="' + escAttr(asset) + '" style="flex:1;" />' +
+      '<input class="asset-edit-input qty-input" type="number" id="inv-asset-qty-' + i + '" value="' + defaultQty + '" min="0" title="Default qty" />' +
+      '<button class="icon-btn save-btn" onclick="saveInvAsset(' + i + ')">💾 Save</button>' +
+      '<button class="icon-btn" onclick="clearRoomQtyInv(' + i + ')" style="color:var(--muted);">✕ Clear</button>' +
+    '</div>';
+}
+
+function saveInvAsset(i) {
   const oldName = ASSETS[i];
-  const newName = document.getElementById('aname-' + i).value.trim().toUpperCase();
-  const newQty = parseInt(document.getElementById('aqty-' + i).value) || 1;
+  const nameEl = document.getElementById('inv-asset-name-' + i);
+  const qtyEl = document.getElementById('inv-asset-qty-' + i);
+  const newName = nameEl ? nameEl.value.trim().toUpperCase() : oldName;
+  const newQty = parseInt(qtyEl ? qtyEl.value : ASSET_QTY[oldName]) || 1;
   if (!newName) { showToast('Asset name cannot be empty'); return; }
   if (newName !== oldName && ASSETS.includes(newName)) { showToast('Asset already exists'); return; }
 
-  // Update name across all room data
+  // collect room qty overrides
+  const panel = document.getElementById('inv-right-panel');
+  const inputs = panel.querySelectorAll('input[data-rk]');
+  const overrides = {};
+  inputs.forEach(inp => {
+    const rk = inp.getAttribute('data-rk');
+    const v = inp.value.trim();
+    if (v !== '') overrides[rk] = parseInt(v);
+  });
+
   if (newName !== oldName) {
     Object.keys(data).forEach(k => {
-      if (data[k][oldName] !== undefined) {
-        data[k][newName] = data[k][oldName];
-        delete data[k][oldName];
-      }
+      if (data[k][oldName] !== undefined) { data[k][newName] = data[k][oldName]; delete data[k][oldName]; }
     });
-    // Update photo key in Firebase
-    const oldPhotoKey = 'asset_photo__' + oldName;
-    const newPhotoKey = 'asset_photo__' + newName;
-    window._db.ref('photos/' + oldPhotoKey).once('value').then(snap => {
-      const oldPhoto = snap.val();
-      if (oldPhoto) {
-        window._db.ref('photos/' + newPhotoKey).set(oldPhoto);
-        window._db.ref('photos/' + oldPhotoKey).remove();
-      }
+    const oldPK = 'asset_photo__' + oldName, newPK = 'asset_photo__' + newName;
+    window._db.ref('photos/' + oldPK).once('value').then(snap => {
+      const p = snap.val(); if (p) { window._db.ref('photos/' + newPK).set(p); window._db.ref('photos/' + oldPK).remove(); }
     });
     ASSETS[i] = newName;
   }
   ASSET_QTY[newName] = newQty;
-  if (newName !== oldName) delete ASSET_QTY[oldName];
+  if (newName !== oldName) { delete ASSET_QTY[oldName]; delete ASSET_ROOM[oldName]; delete ASSET_ROOM_QTY[oldName]; }
+  ASSET_ROOM_QTY[newName] = overrides;
 
   saveData();
   rebuildAllPanels();
-  renderAssetEditTable();
-  showToast('Asset updated: ' + newName);
+  renderInvAssetList();
+  buildInvRightPanel(i);
+  showToast('Asset saved: ' + newName);
 }
+
+function clearRoomQtyInv(i) {
+  const asset = ASSETS[i];
+  ASSET_ROOM_QTY[asset] = {};
+  saveData();
+  rebuildAllPanels();
+  buildInvRightPanel(i);
+  renderInvAssetList();
+  showToast('Room qty overrides cleared');
+}
+
+function renderLocGrid() {
+  const grid = document.getElementById('loc-rooms-grid');
+  grid.innerHTML = '';
+  Object.entries(BUILDINGS).forEach(([bld, rooms]) => {
+    const card = document.createElement('div');
+    card.className = 'loc-bld-card';
+    const tagsHtml = rooms.length
+      ? rooms.map((r, idx) =>
+          '<span class="room-tag">' + r +
+          ' <span class="rtag-del" onclick="deleteRoomFromBuilding(\'' + escAttr(bld) + '\',' + idx + ')" title="Remove">&#10005;</span>' +
+          '</span>'
+        ).join('')
+      : '<span style="font-size:11px;color:var(--muted);">No rooms</span>';
+    card.innerHTML =
+      '<div class="loc-bld-card-header">' +
+        '<span class="loc-bld-card-name">' + escAttr(bld) + '</span>' +
+        '<span class="loc-bld-card-count">' + rooms.length + ' Rooms</span>' +
+      '</div>' +
+      '<div class="loc-room-tags">' + tagsHtml + '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function renderRoomTags() {
+  // kept for compatibility — locations tab now uses renderLocGrid
+  renderLocGrid();
+}
+
+function addRoomToBuilding() {
+  const bld = document.getElementById('room-bld-select').value;
+  const val = document.getElementById('new-room-number').value.trim();
+  if (!bld) { showToast('Select a building first'); return; }
+  if (!val) { showToast('Enter a room number'); return; }
+  const roomNum = isNaN(val) ? val : parseInt(val);
+  if (BUILDINGS[bld].includes(roomNum)) { showToast('Room already exists'); return; }
+  BUILDINGS[bld].push(roomNum);
+  BUILDINGS[bld].sort((a,b) => (String(a) > String(b) ? 1 : -1));
+  document.getElementById('new-room-number').value = '';
+  ensureDefaults();
+  saveBuildings();
+  saveData();
+  rebuildAllPanels();
+  renderLocGrid();
+  showToast('Room ' + roomNum + ' added to ' + bld);
+}
+
+function deleteRoomFromBuilding(bld, idx) {
+  const room = BUILDINGS[bld][idx];
+  if (!confirm('Remove room ' + room + ' from ' + bld + '? Checklist data for this room will also be deleted.')) return;
+  BUILDINGS[bld].splice(idx, 1);
+  const k = roomKey(bld, room);
+  delete data[k];
+  window._db.ref('checklist/' + currentDate + '/' + k.replace(/\./g,'_')).remove();
+  saveBuildings();
+  saveData();
+  rebuildAllPanels();
+  renderLocGrid();
+  showToast('Room ' + room + ' removed');
+}
+
+function closeManageAssets() {
+  document.getElementById('manage-assets-modal').classList.remove('open');
+  rebuildAllPanels();
+}
+
+function saveBuildings() {
+  window._db.ref('building_rooms').set(BUILDINGS);
+}
+
+function renderAssetEditTable() { renderInvAssetList(); } // compat stub
+
+function escAttr(s) { return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function safeId(s) { return s.replace(/[^a-zA-Z0-9_\-]/g,'_'); }
+
+function saveAssetEdit(i) { saveInvAsset(i); }
 
 function deleteAsset(i) {
   const name = ASSETS[i];
   if (!confirm('Remove "' + name + '" from all rooms?')) return;
-  // Remove from all room data
   Object.keys(data).forEach(k => { delete data[k][name]; });
   window._db.ref('photos/asset_photo__' + name).remove();
   ASSETS.splice(i, 1);
   delete ASSET_QTY[name];
+  delete ASSET_ROOM[name];
+  delete ASSET_ROOM_QTY[name];
   saveData();
   rebuildAllPanels();
-  renderAssetEditTable();
+  if (_selectedAssetIdx === i) {
+    _selectedAssetIdx = null;
+    document.getElementById('inv-right-panel').innerHTML = '<div class="inv-no-selection">Select an asset to manage per-room quantities</div>';
+  } else if (_selectedAssetIdx > i) {
+    _selectedAssetIdx--;
+  }
+  renderInvAssetList();
   updateProgress(roomKey(activeBuilding, activeRoom));
   updateSummary();
   showToast('Asset removed: ' + name);
@@ -777,16 +1028,18 @@ function addNewAsset() {
   if (ASSETS.includes(name)) { showToast('Asset already exists'); return; }
   ASSETS.push(name);
   ASSET_QTY[name] = qty;
-  // Initialise in all rooms
+  ASSET_ROOM[name] = '';
   Object.keys(data).forEach(k => { data[k][name] = {condition:'',remarks:''}; });
   saveData();
   rebuildAllPanels();
-  renderAssetEditTable();
   nameEl.value = '';
   qtyEl.value = '1';
-  // Scroll new row into view
-  const tbody = document.getElementById('asset-edit-tbody');
-  tbody.lastElementChild && tbody.lastElementChild.scrollIntoView({behavior:'smooth'});
+  _selectedAssetIdx = ASSETS.length - 1;
+  renderInvAssetList();
+  buildInvRightPanel(_selectedAssetIdx);
+  // scroll new item into view
+  const list = document.getElementById('inv-asset-list');
+  list.lastElementChild && list.lastElementChild.scrollIntoView({behavior:'smooth'});
   showToast('Asset added: ' + name);
 }
 
@@ -803,26 +1056,80 @@ function ensureDefaults() {
 
 function loadData() {
   data = {};
-  ensureDefaults();
 
-  // Real-time listener from RTDB
-  const ref = window._db.ref('checklist/' + currentDate);
-  ref.on('value', snapshot => {
-    const remote = snapshot.val();
-    if (remote) {
-      data = remote;
-      ensureDefaults();
-    } else {
-      ensureDefaults();
+  // Load persisted building rooms first
+  window._db.ref('building_rooms').once('value').then(bldSnap => {
+    const bldData = bldSnap.val();
+    if (bldData) {
+      Object.keys(bldData).forEach(b => {
+        if (BUILDINGS[b]) {
+          // Merge: add any new rooms not already present
+          bldData[b].forEach(r => { if (!BUILDINGS[b].includes(r)) BUILDINGS[b].push(r); });
+        } else {
+          BUILDINGS[b] = bldData[b];
+        }
+      });
     }
-    rebuildAllPanels();
-    buildDashboard();
-    updateSummary();
-    document.getElementById('last-updated').textContent = 'Synced: ' + new Date().toLocaleString('en-IN');
-  });
+
+    // Load persisted asset definitions first, then start checklist listener
+    window._db.ref('asset_definitions').once('value').then(snap => {
+    const defs = snap.val();
+    if (defs) {
+      if (Array.isArray(defs.assets) && defs.assets.length) {
+        // Merge: keep any hardcoded assets not yet in Firebase, add any persisted extras
+        defs.assets.forEach(a => { if (!ASSETS.includes(a)) ASSETS.push(a); });
+      }
+      if (defs.qty) Object.assign(ASSET_QTY, defs.qty);
+      if (defs.room) Object.assign(ASSET_ROOM, defs.room);
+      if (defs.room_qty) {
+        // Decode encoded room keys
+        Object.entries(defs.room_qty).forEach(([asset, roomMap]) => {
+          if (roomMap && typeof roomMap === 'object') {
+            ASSET_ROOM_QTY[asset] = {};
+            Object.entries(roomMap).forEach(([encRk, qty]) => {
+              ASSET_ROOM_QTY[asset][rqtyDecode(encRk)] = qty;
+            });
+          }
+        });
+      }
+    }
+    ensureDefaults();
+
+    // Real-time listener from RTDB
+    const ref = window._db.ref('checklist/' + currentDate);
+    ref.on('value', snapshot => {
+      const remote = snapshot.val();
+      if (remote) {
+        data = remote;
+        ensureDefaults();
+      } else {
+        ensureDefaults();
+      }
+      rebuildAllPanels();
+      buildDashboard();
+      updateSummary();
+      document.getElementById('last-updated').textContent = 'Synced: ' + new Date().toLocaleString('en-IN');
+    });
+  }); // end asset_definitions
+  }); // end building_rooms
 }
 
 function saveData() {
+  // Persist asset definitions so new assets survive refresh
+  // Encode room keys in room_qty for Firebase (no special chars in keys)
+  const encodedRoomQty = {};
+  Object.entries(ASSET_ROOM_QTY).forEach(([asset, roomMap]) => {
+    encodedRoomQty[asset] = {};
+    Object.entries(roomMap || {}).forEach(([rk, qty]) => {
+      encodedRoomQty[asset][rqtyEncode(rk)] = qty;
+    });
+  });
+  window._db.ref('asset_definitions').set({
+    assets: ASSETS,
+    qty: ASSET_QTY,
+    room: ASSET_ROOM,
+    room_qty: encodedRoomQty
+  });
   window._db.ref('checklist/' + currentDate).set(data)
     .then(() => {
       document.getElementById('last-updated').textContent = 'Saved & synced: ' + new Date().toLocaleString('en-IN');
@@ -992,9 +1299,9 @@ function buildRoomTabs() {
     const k=roomKey(activeBuilding,r);
     const tab=document.createElement('div');
     tab.className='room-tab'+(r===activeRoom?' active':'');
-    tab.id='tab-'+k; tab.onclick=()=>switchRoom(r);
+    tab.id='tab-'+safeId(k); tab.onclick=()=>switchRoom(r);
     const filled=Object.values(data[k]).filter(a=>a.condition!=='').length;
-    tab.innerHTML=r+'<span class="tab-progress" id="prog-'+k+'">'+filled+'/'+ASSETS.length+'</span>';
+    tab.innerHTML=r+'<span class="tab-progress" id="prog-'+safeId(k)+'">'+filled+'/'+ASSETS.length+'</span>';
     c.appendChild(tab);
   });
 }
@@ -1006,7 +1313,7 @@ function buildPanels() {
     const k=roomKey(activeBuilding,r);
     const panel=document.createElement('div');
     panel.className='checklist-panel'+(r===activeRoom?' active':'');
-    panel.id='panel-'+k;
+    panel.id='panel-'+safeId(k);
     panel.appendChild(buildTable(k));
     panel.appendChild(buildFooter(k));
     c.appendChild(panel);
@@ -1027,7 +1334,8 @@ function buildTable(key) {
     const photoKey='asset_photo__'+asset;
     const cellId='photocell__'+safeId(key)+'__'+safeId(photoKey);
     const photoCell = '<span id="'+cellId+'"><label class="photo-upload-label"><input type="file" accept="image/*" class="photo-input" onchange="saveAssetPhoto(\''+photoKey+'\',\''+cellId+'\',this,\''+sa+'\')">📷 Add</label></span>';
-    const qty=ASSET_QTY[asset]||'—';
+    const rqtyOverrides = ASSET_ROOM_QTY[asset] || {};
+    const qty = (rqtyOverrides[key] !== undefined ? rqtyOverrides[key] : ASSET_QTY[asset]) || '—';
     html+='<tr><td>'+(i+1)+'</td><td>'+asset+'</td><td style="text-align:center;font-weight:600;">'+qty+'</td><td class="photo-cell">'+photoCell+'</td><td><div class="condition-select">'+
       '<button class="cond-btn '+(cond==='Good'?'good':'')+'" onclick="setCondition(\''+sk+'\',\''+sa+'\',\'Good\',this)">Good</button>'+
       '<button class="cond-btn '+(cond==='Damaged'?'damaged':'')+'" onclick="setCondition(\''+sk+'\',\''+sa+'\',\'Damaged\',this)">Damaged</button>'+
@@ -1052,7 +1360,8 @@ function buildFooter(key) {
   f.innerHTML='<div class="fill-all"><span class="fill-label">Mark all as:</span>'+
     '<button class="cond-btn good" onclick="fillAll(\''+sk+'\',\'Good\')">Good</button>'+
     '<button class="cond-btn damaged" onclick="fillAll(\''+sk+'\',\'Damaged\')">Damaged</button>'+
-    '<button class="cond-btn missing" onclick="fillAll(\''+sk+'\',\'Missing\')">Missing</button></div>';
+    '<button class="cond-btn missing" onclick="fillAll(\''+sk+'\',\'Missing\')">Missing</button>'+
+    '<button class="cond-btn" onclick="resetAll(\''+sk+'\')" style="border-color:var(--muted);color:var(--muted);">↺ Reset</button></div>';
   return f;
 }
 
@@ -1062,8 +1371,8 @@ function switchRoom(r) {
   document.querySelectorAll('.room-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.checklist-panel').forEach(p=>p.classList.remove('active'));
   const k=roomKey(activeBuilding,r);
-  const tab=document.getElementById('tab-'+k);
-  const panel=document.getElementById('panel-'+k);
+  const tab=document.getElementById('tab-'+safeId(k));
+  const panel=document.getElementById('panel-'+safeId(k));
   if(tab) tab.classList.add('active');
   if(panel) panel.classList.add('active');
   activeRoom=r; updateSummary();
@@ -1086,24 +1395,32 @@ function fillAll(key,condition) {
   showToast('All assets marked as '+condition);
 }
 
+function resetAll(key) {
+  ASSETS.forEach(a=>{ data[key][a].condition=''; data[key][a].remarks=''; });
+  saveData(); rebuildPanel(key); updateSummary();
+  showToast('All assets reset');
+}
+
 function rebuildPanel(key) {
-  const old=document.getElementById('panel-'+key);
+  const old=document.getElementById('panel-'+safeId(key));
   if(!old) return;
   const wasActive=old.classList.contains('active');
   const parent=old.parentNode;
+  const nextSibling=old.nextSibling;
   old.remove();
   const panel=document.createElement('div');
   panel.className='checklist-panel'+(wasActive?' active':'');
-  panel.id='panel-'+key;
+  panel.id='panel-'+safeId(key);
   panel.appendChild(buildTable(key));
   panel.appendChild(buildFooter(key));
-  parent.appendChild(panel);
+  if(nextSibling) parent.insertBefore(panel, nextSibling);
+  else parent.appendChild(panel);
   updateProgress(key);
 }
 
 function updateProgress(key) {
   const filled=Object.values(data[key]).filter(a=>a.condition!=='').length;
-  const el=document.getElementById('prog-'+key);
+  const el=document.getElementById('prog-'+safeId(key));
   if(el) el.textContent=filled+'/'+ASSETS.length;
 }
 
@@ -1176,7 +1493,7 @@ function exportSummary() {
         '<table><thead><tr><th>#</th><th>Asset</th><th style="text-align:center;">QTY</th><th>Condition</th><th>Remarks</th></tr></thead><tbody>';
       ASSETS.forEach((asset,i)=>{
         const d=assets[asset];
-        const qty=ASSET_QTY[asset]||'—';
+        const qty=(ASSET_ROOM_QTY[asset]&&ASSET_ROOM_QTY[asset][k]!==undefined ? ASSET_ROOM_QTY[asset][k] : ASSET_QTY[asset])||'—';
         html+='<tr><td>'+(i+1)+'</td><td>'+asset+'</td><td style="text-align:center;font-weight:600;">'+qty+'</td><td>'+badge(d.condition)+'</td><td style="color:#555;font-size:12px;">'+(d.remarks||'—')+'</td></tr>';
       });
       html+='</tbody></table>';
@@ -1249,7 +1566,14 @@ function saveAssetPhoto(photoKey, cellId, input, assetName) {
 }
 
 function rebuildAllPanels() {
-  BUILDINGS[activeBuilding].forEach(r => rebuildPanel(roomKey(activeBuilding, r)));
+  // Rebuild panels for ALL buildings so per-room qty changes show everywhere
+  Object.entries(BUILDINGS).forEach(([bld, rooms]) => {
+    rooms.forEach(r => {
+      const k = roomKey(bld, r);
+      const panel = document.getElementById('panel-' + safeId(k));
+      if (panel) rebuildPanel(k);
+    });
+  });
 }
 
 function openLightbox(assetName, photoKey) {
