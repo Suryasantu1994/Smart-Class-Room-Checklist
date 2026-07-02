@@ -589,6 +589,12 @@
           <input class="asset-edit-input" type="text" id="new-room-number" placeholder="Rm No..." style="width:90px;" onkeydown="if(event.key==='Enter')addRoomToBuilding()" />
           <button class="icon-btn save-btn" onclick="addRoomToBuilding()">ADD ROOM</button>
         </div>
+        <div class="loc-add-row" style="margin-top:8px;">
+          <input class="asset-edit-input" type="text" id="new-building-name" placeholder="Building (e.g. AB1)" style="width:110px;" />
+          <input class="asset-edit-input" type="text" id="new-building-floor" placeholder="Floor (e.g. 4th Floor)" style="width:130px;" />
+          <input class="asset-edit-input" type="text" id="new-building-room" placeholder="Rm No... (optional)" style="width:110px;" onkeydown="if(event.key==='Enter')addManualBuilding()" />
+          <button class="icon-btn save-btn" onclick="addManualBuilding()">ADD NEW BUILDING/FLOOR</button>
+        </div>
         <div class="loc-rooms-grid" id="loc-rooms-grid"></div>
       </div>
     </div>
@@ -734,6 +740,7 @@
 const BUILDINGS = {
   'AB1 - 2nd Floor': [203,204,207,208,211,212],
   'AB1 - 3rd Floor': [303,304,310,311],
+  'AB1 - 4th Floor': [415],
   'AB1 - 5th Floor': [529,532,535,536],
   'AB2 - 2nd Floor': [223,228,229,231,232],
   'AB2 - 3rd Floor': [302,304,305,313,317,318,320,321,326,329,332,334,335,336],
@@ -964,6 +971,37 @@ function addRoomToBuilding() {
   rebuildAllPanels();
   renderLocGrid();
   showToast('Room ' + roomNum + ' added to ' + bld);
+}
+
+function addManualBuilding() {
+  const bldEl = document.getElementById('new-building-name');
+  const floorEl = document.getElementById('new-building-floor');
+  const roomEl = document.getElementById('new-building-room');
+  const bldName = bldEl.value.trim();
+  const floorName = floorEl.value.trim();
+  const roomVal = roomEl.value.trim();
+  if (!bldName) { showToast('Enter a building name'); return; }
+  const key = floorName ? (bldName + ' - ' + floorName) : bldName;
+  if (BUILDINGS[key]) { showToast('This building/floor already exists'); return; }
+  BUILDINGS[key] = [];
+  if (roomVal) {
+    const roomNum = isNaN(roomVal) ? roomVal : parseInt(roomVal);
+    BUILDINGS[key].push(roomNum);
+  }
+  bldEl.value = ''; floorEl.value = ''; roomEl.value = '';
+  ensureDefaults();
+  saveBuildings();
+  saveData();
+  rebuildAllPanels();
+  renderLocGrid();
+  const locSel = document.getElementById('room-bld-select');
+  locSel.innerHTML = '<option value="">— Building —</option>';
+  Object.keys(BUILDINGS).forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b; opt.textContent = b;
+    locSel.appendChild(opt);
+  });
+  showToast('Added: ' + key);
 }
 
 function deleteRoomFromBuilding(bld, idx) {
