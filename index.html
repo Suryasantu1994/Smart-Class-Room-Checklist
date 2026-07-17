@@ -11,10 +11,10 @@
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBAdu_8_AX8MG270UzemYLaYxfiHeZlR8U",
-    authDomain: "smart-class-room-checklist.firebaseapp.com",
-    databaseURL: "https://smart-class-room-checklist-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "smart-class-room-checklist",
-    storageBucket: "smart-class-room-checklist.firebasestorage.app",
+    authDomain: "smart-class-room-checkli-6ae48.firebaseapp.com",
+    databaseURL: "https://smart-class-room-checkli-6ae48-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "smart-class-room-checkli-6ae48",
+    storageBucket: "smart-class-room-checkli-6ae48.firebasestorage.app",
     messagingSenderId: "603568354634",
     appId: "1:603568354634:web:a37293b76610f17ce23db3"
   };
@@ -1167,7 +1167,7 @@ function loadData() {
       } else {
         ensureDefaults();
       }
-      rebuildAllPanels();
+      buildUI();
       buildDashboard();
       updateSummary();
       document.getElementById('last-updated').textContent = 'Synced: ' + new Date().toLocaleString('en-IN');
@@ -1181,7 +1181,7 @@ function loadData() {
       const remote = snapshot.val();
       data = remote || data;
       ensureDefaults();
-      rebuildAllPanels();
+      buildUI();
       buildDashboard();
       updateSummary();
     });
@@ -1233,7 +1233,7 @@ function getBuildingStats() {
       const k = roomKey(bld,r);
       ASSETS.forEach(a => {
         total++;
-        const c = data[k][a].condition;
+        const c = (data[k] && data[k][a] ? data[k][a].condition : '') || '';
         if (c==='Good'){good++;inspected++;}
         else if(c==='Damaged'){damaged++;inspected++;}
         else if(c==='Missing'){missing++;inspected++;}
@@ -1378,7 +1378,7 @@ function buildRoomTabs() {
     const tab=document.createElement('div');
     tab.className='room-tab'+(r===activeRoom?' active':'');
     tab.id='tab-'+safeId(k); tab.onclick=()=>switchRoom(r);
-    const filled=Object.values(data[k]).filter(a=>a.condition!=='').length;
+    const filled=Object.values(data[k]||{}).filter(a=>a&&a.condition!=='').length;
     tab.innerHTML=r+'<span class="tab-progress" id="prog-'+safeId(k)+'">'+filled+'/'+ASSETS.length+'</span>';
     c.appendChild(tab);
   });
@@ -1406,8 +1406,9 @@ function buildTable(key) {
   wrap.className='table-wrap';
   let html='<table><thead><tr><th>#</th><th>Asset Description</th><th style="width:48px;text-align:center;">QTY</th><th style="width:96px;">Asset Photo</th><th>Condition</th><th>Remarks</th></tr></thead><tbody>';
   ASSETS.forEach((asset,i)=>{
-    const cond=data[key][asset].condition;
-    const remarks=(data[key][asset].remarks||'').replace(/"/g,'&quot;');
+    const entry=data[key] && data[key][asset] ? data[key][asset] : {condition:'',remarks:''};
+    const cond=entry.condition||'';
+    const remarks=(entry.remarks||'').replace(/"/g,'&quot;');
     const sk=key.replace(/'/g,"\\'"), sa=asset.replace(/'/g,"\\'");
     const photoKey='asset_photo__'+asset;
     const cellId='photocell__'+safeId(key)+'__'+safeId(photoKey);
@@ -1443,7 +1444,7 @@ function buildFooter(key) {
   return f;
 }
 
-function switchBuilding(bld) { activeBuilding=bld; activeRoom=BUILDINGS[bld][0]; buildUI(); }
+function switchBuilding(bld) { activeBuilding=bld; activeRoom=BUILDINGS[bld][0]; ensureDefaults(); buildUI(); }
 
 function switchRoom(r) {
   document.querySelectorAll('.room-tab').forEach(t=>t.classList.remove('active'));
@@ -1457,6 +1458,8 @@ function switchRoom(r) {
 }
 
 function setCondition(key,asset,condition,btn) {
+  if(!data[key]) data[key]={};
+  if(!data[key][asset]) data[key][asset]={condition:'',remarks:''};
   const isActive=data[key][asset].condition===condition;
   data[key][asset].condition=isActive?'':condition;
   const row=btn.closest('tr');
@@ -1465,7 +1468,7 @@ function setCondition(key,asset,condition,btn) {
   saveData(); updateProgress(key); updateSummary();
 }
 
-function setRemarks(key,asset,value) { data[key][asset].remarks=value; saveData(); }
+function setRemarks(key,asset,value) { if(!data[key]) data[key]={}; if(!data[key][asset]) data[key][asset]={condition:'',remarks:''}; data[key][asset].remarks=value; saveData(); }
 
 function fillAll(key,condition) {
   ASSETS.forEach(a=>{ data[key][a].condition=condition; });
@@ -1504,7 +1507,7 @@ function updateProgress(key) {
 
 function updateSummary() {
   const k=roomKey(activeBuilding,activeRoom);
-  const assets=Object.values(data[k]||{});
+  const assets=Object.values(data[k]||{}).filter(a=>a&&typeof a==='object');
   document.getElementById('sum-total').textContent=ASSETS.length;
   document.getElementById('sum-good').textContent=assets.filter(a=>a.condition==='Good').length;
   document.getElementById('sum-damaged').textContent=assets.filter(a=>a.condition==='Damaged').length;
@@ -1596,10 +1599,8 @@ function saveInspectionDate(val) {
   window._db.ref('checklist/' + currentDate).off();
   currentDate = val;
   activeRoom = BUILDINGS[activeBuilding][0];
-  loadData();
-  buildUI();
-  buildDashboard();
   document.getElementById('last-updated').textContent = 'Loading data for ' + val + '…';
+  loadData(); // Firebase listener inside will call rebuildAllPanels + buildDashboard when data arrives
 }
 
 function loadInspectionDate() {
@@ -1833,10 +1834,8 @@ function closeSnapshotModal() {
   snapshotDataUrl = null;
 }
 
-loadData();
-buildUI();
-buildDashboard();
 loadInspectionDate();
+loadData(); // buildUI + buildDashboard called inside after Firebase responds
 </script>
 </body>
 </html>
