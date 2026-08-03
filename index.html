@@ -143,6 +143,23 @@
   .kpi-good .kpi-value { color: var(--good); }
   .kpi-damaged .kpi-value { color: var(--damaged); }
   .kpi-missing .kpi-value { color: var(--missing); }
+  .kpi-card.kpi-clickable { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+  .kpi-card.kpi-clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+  .kpi-card.kpi-clickable .kpi-sub::after { content: ' ↗'; font-size: 10px; opacity: 0.6; }
+
+  /* Detail modal */
+  .detail-modal-inner { width: 560px; max-width: 95vw; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; }
+  .detail-modal-inner h2 { flex-shrink: 0; }
+  .detail-modal-body { flex: 1; overflow-y: auto; margin-top: 12px; }
+  .detail-bld-group { margin-bottom: 16px; }
+  .detail-bld-label { font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .detail-room-block { margin-bottom: 8px; padding: 10px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; }
+  .detail-room-label { font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; margin-bottom: 6px; }
+  .detail-asset-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 12.5px; padding: 4px 0; border-bottom: 1px solid var(--border); gap: 8px; }
+  .detail-asset-row:last-child { border-bottom: none; }
+  .detail-asset-name { font-weight: 500; flex: 1; }
+  .detail-asset-remarks { font-size: 11px; color: var(--muted); font-style: italic; text-align: right; max-width: 45%; }
+  .detail-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 24px 0; }
 
   #view-dashboard { overflow-x: hidden; }
   .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 24px; }
@@ -534,6 +551,15 @@
     <div class="room-tabs" id="room-tabs"></div>
     <div id="panels-container"></div>
     <div class="last-updated" id="last-updated"></div>
+  </div>
+</div>
+
+<!-- CONDITION DETAIL MODAL -->
+<div class="modal-overlay" id="condition-detail-modal">
+  <div class="modal detail-modal-inner">
+    <h2 id="detail-modal-title">Damaged Assets</h2>
+    <div class="detail-modal-body" id="detail-modal-body"></div>
+    <button class="btn modal-close" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);margin-top:14px;" onclick="closeDetailModal()">Close</button>
   </div>
 </div>
 
@@ -1253,8 +1279,8 @@ function buildDashboard() {
   document.getElementById('kpi-row').innerHTML = `
     <div class="kpi-card kpi-rooms"><div class="kpi-label">Total Rooms</div><div class="kpi-value">${totR}</div><div class="kpi-sub">across ${stats.length} buildings</div></div>
     <div class="kpi-card kpi-good"><div class="kpi-label">Good Assets</div><div class="kpi-value">${totG}</div><div class="kpi-sub">inspected &amp; OK</div></div>
-    <div class="kpi-card kpi-damaged"><div class="kpi-label">Damaged</div><div class="kpi-value">${totD}</div><div class="kpi-sub">needs attention</div></div>
-    <div class="kpi-card kpi-missing"><div class="kpi-label">Missing</div><div class="kpi-value">${totM}</div><div class="kpi-sub">not found</div></div>`;
+    <div class="kpi-card kpi-damaged kpi-clickable" onclick="openConditionDetail('Damaged')" title="View damaged assets"><div class="kpi-label">Damaged</div><div class="kpi-value">${totD}</div><div class="kpi-sub">needs attention</div></div>
+    <div class="kpi-card kpi-missing kpi-clickable" onclick="openConditionDetail('Missing')" title="View missing assets"><div class="kpi-label">Missing</div><div class="kpi-value">${totM}</div><div class="kpi-sub">not found</div></div>`;
 
   const isMobile = window.innerWidth < 768;
   const labels = stats.map(s => isMobile
@@ -1712,6 +1738,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('snapshot-modal').addEventListener('click', function(e) {
     if (e.target === this) closeSnapshotModal();
   });
+  document.getElementById('condition-detail-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeDetailModal();
+  });
 });
 
 // ── DASHBOARD SNAPSHOT & WHATSAPP SHARE ──
@@ -1832,6 +1861,53 @@ function downloadSnapshot() {
 function closeSnapshotModal() {
   document.getElementById('snapshot-modal').classList.remove('open');
   snapshotDataUrl = null;
+}
+
+// ── CONDITION DETAIL MODAL ──
+function openConditionDetail(condition) {
+  const colorMap = { Damaged: 'var(--damaged)', Missing: 'var(--missing)' };
+  const iconMap  = { Damaged: '⚠️', Missing: '❌' };
+  document.getElementById('detail-modal-title').innerHTML =
+    `<span style="color:${colorMap[condition]}">${iconMap[condition]} ${condition} Assets</span>`;
+
+  let html = '';
+  let totalFound = 0;
+
+  Object.entries(BUILDINGS).forEach(([bld, rooms]) => {
+    let bldHtml = '';
+    rooms.forEach(r => {
+      const k = roomKey(bld, r);
+      const matchingAssets = ASSETS.filter(a =>
+        data[k] && data[k][a] && data[k][a].condition === condition
+      );
+      if (!matchingAssets.length) return;
+      totalFound += matchingAssets.length;
+      bldHtml += `<div class="detail-room-block">
+        <div class="detail-room-label">Room ${r}</div>
+        ${matchingAssets.map(a => {
+          const remarks = (data[k][a].remarks || '').trim();
+          return `<div class="detail-asset-row">
+            <span class="detail-asset-name">${a}</span>
+            ${remarks ? `<span class="detail-asset-remarks">${remarks}</span>` : ''}
+          </div>`;
+        }).join('')}
+      </div>`;
+    });
+    if (bldHtml) {
+      html += `<div class="detail-bld-group">
+        <div class="detail-bld-label">${bld}</div>
+        ${bldHtml}
+      </div>`;
+    }
+  });
+
+  document.getElementById('detail-modal-body').innerHTML =
+    totalFound ? html : `<div class="detail-empty">No ${condition.toLowerCase()} assets found.</div>`;
+  document.getElementById('condition-detail-modal').classList.add('open');
+}
+
+function closeDetailModal() {
+  document.getElementById('condition-detail-modal').classList.remove('open');
 }
 
 loadInspectionDate();
